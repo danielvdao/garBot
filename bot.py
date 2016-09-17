@@ -1,26 +1,22 @@
 import discord
 import asyncio
 import properties
+import giphypop
+import urllib.request
+
+g = giphypop.Giphy()
 client = discord.Client()
 
 @client.event
-async def on_ready():
-    print('Logged in as')
-    print(client.user.name)
-    print(client.user.id)
-    print('------')
-
-@client.event
 async def on_message(message):
-    if message.content.startswith('!test'):
-        counter = 0
-        tmp = await client.send_message(message.channel, 'Calculating messages...')
-        async for log in client.logs_from(message.channel, limit=100):
-            if log.author == message.author:
-                counter += 1
-        await client.edit_message(tmp, 'You have {} messages.'.format(counter))
-    elif message.content.startswith('!sleep'):
-        await asyncio.sleep(5)
-        await client.send_message(message.channel, 'Done sleeping')
+    if message.content.startswith('!lucky'):
+        searchResults = [x for x in g.search(message.content.split('!lucky ')[1])]
+        if not searchResults:
+            await client.send_message(message.channel, 'There is no image to be found')
+        else:
+            img = searchResults[0].media_url
+            imgFile = urllib.request.urlopen(img)
+            await client.send_file(message.channel, imgFile, filename='giphy.gif')
+            await client.send_message('Powered by GIPHY')
 
 client.run(properties.TOKEN)
