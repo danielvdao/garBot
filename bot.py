@@ -17,5 +17,6 @@ async def on_message(message):
             img = searchResults[0].media_url
             imgFile = urllib.request.urlopen(img)
             await client.send_file(message.channel, imgFile, filename='giphy.gif')
+            await.client.send_message('Powered by GIPHY')
 
 client.run(properties.TOKEN)
