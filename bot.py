@@ -18,11 +18,12 @@ async def on_ready():
 async def on_message(message):
     if message.content.startswith('!lucky'):
         counter = 0
-        imgSearch = message.content.split('!lucky ')
-        img = [x for x in g.search(imgSearch[1])][0].media_url
-        imgFile = urllib.request.urlopen(img)
-        ##### todo handle the case where there is no media url or image could not be found
-        # await client.send_message(message.channel, [x for x in g.search(imgSearch[1])][0].url)
-        await client.send_file(message.channel, imgFile, filename='giphy.gif')
+        searchResults = g.search(message.content.split('!lucky ')[1])
+        if not imgSearch:
+            await client.send_message(message.channel, 'There is no image to be found')
+        else:
+            img = searchResults[0].media_url
+            imgFile = urllib.request.urlopen(img)
+            await client.send_file(message.channel, imgFile, filename='giphy.gif')
 
 client.run(properties.TOKEN)
