@@ -1,6 +1,10 @@
 import discord
 import asyncio
 import properties
+import giphypop
+import urllib.request
+
+g = giphypop.Giphy()
 client = discord.Client()
 
 @client.event
@@ -12,15 +16,13 @@ async def on_ready():
 
 @client.event
 async def on_message(message):
-    if message.content.startswith('!test'):
+    if message.content.startswith('!lucky'):
         counter = 0
-        tmp = await client.send_message(message.channel, 'Calculating messages...')
-        async for log in client.logs_from(message.channel, limit=100):
-            if log.author == message.author:
-                counter += 1
-        await client.edit_message(tmp, 'You have {} messages.'.format(counter))
-    elif message.content.startswith('!sleep'):
-        await asyncio.sleep(5)
-        await client.send_message(message.channel, 'Done sleeping')
+        imgSearch = message.content.split('!lucky ')
+        img = [x for x in g.search(imgSearch[1])][0].media_url
+        imgFile = urllib.request.urlopen(img)
+        ##### todo handle the case where there is no media url or image could not be found
+        # await client.send_message(message.channel, [x for x in g.search(imgSearch[1])][0].url)
+        await client.send_file(message.channel, imgFile, filename='giphy.gif')
 
 client.run(properties.TOKEN)
